@@ -1,4 +1,3 @@
-
 declare global {
     interface String {
         capitalize(): string;
@@ -19,21 +18,22 @@ String.prototype.camelCase = function (): string {
 
 declare global {
     interface Array<T> {
-        compactMap<U = T>(callback?: (element: T, index: number, array: T[]) => U | null | undefined): U[];
+        compact(): T[];
+        deepCopy(): T[];
+    }
+    interface ReadonlyArray<T> {
         deepCopy(): T[];
     }
 }
 
-Array.prototype.compactMap = function <T, U = T>(
-    this: T[],
-    callback: (element: T, index: number, array: T[]) => U | null | undefined = x => x as unknown as U
-): U[] {
-    const result: U[] = [];
+Array.prototype.compact = function <T>(
+    this: (T | undefined | null)[],
+): T[] {
+    const result: T[] = [];
     for (let i = 0; i < this.length; i++) {
-        const mapped = callback(this[i], i, this);
-        if (mapped !== null && mapped !== undefined) {
-            result.push(mapped);
-        }
+        const item = this[i];
+        if (item !== null && item !== undefined)
+            result.push(item);
     }
     return result;
 };
